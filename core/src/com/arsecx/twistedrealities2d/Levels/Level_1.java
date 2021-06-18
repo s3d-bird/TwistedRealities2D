@@ -6,6 +6,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -15,10 +18,20 @@ public class Level_1 implements Screen {
     Viewport viewport; // primary viewport for the camera
     Camera camera; // character follow camera; or the main basic camera
 
+    // TILEMAP Loader
+    private TiledMap map;
+    private OrthogonalTiledMapRenderer renderer;
+
     public Level_1 (LevelController lvlController) {
         this.levelController = lvlController;
         camera = new OrthographicCamera();
         viewport = new FitViewport(256, 144, camera);
+
+        // map loading
+        map = new TmxMapLoader().load("Level_1/Level_1.tmx");
+        renderer = new OrthogonalTiledMapRenderer(map);
+
+        camera.position.set(viewport.getWorldWidth()/2, viewport.getWorldHeight()/2, 0);
     }
 
     public void inputController() {
@@ -27,6 +40,9 @@ public class Level_1 implements Screen {
 
     public void update() {
         // this function will deal with level logic and post-input functionalities
+        inputController();
+        camera.update();
+        renderer.setView((OrthographicCamera) camera);
     }
 
     @Override
@@ -42,11 +58,12 @@ public class Level_1 implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // further code will be added when HUD and Level are created
+        renderer.render(); // render the map
     }
 
     @Override
     public void resize(int width, int height) {
-
+        viewport.update(width, height);
     }
 
     @Override
