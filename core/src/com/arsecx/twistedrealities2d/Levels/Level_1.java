@@ -2,6 +2,7 @@ package com.arsecx.twistedrealities2d.Levels;
 
 import com.arsecx.twistedrealities2d.LevelController;
 import com.arsecx.twistedrealities2d.Sprites.Arek;
+import com.arsecx.twistedrealities2d.UIElements.MovementButtons;
 import com.arsecx.twistedrealities2d.WorldCreator;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -9,12 +10,17 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -36,6 +42,12 @@ public class Level_1 implements Screen {
     // Sprites
     private Arek player;
 
+    // Texture loader for Sprite Sheets
+    private TextureAtlas arek;
+
+    // UI Elements
+    MovementButtons buttons;
+
     public Level_1 (LevelController lvlController) {
         this.levelController = lvlController;
         camera = new OrthographicCamera();
@@ -45,16 +57,34 @@ public class Level_1 implements Screen {
         map = new TmxMapLoader().load("Level_1/Level_1.tmx");
         renderer = new OrthogonalTiledMapRenderer(map, 1);
 
+        // creating the world
         world = new World(new Vector2(0, -100), true); // Vector2 is the vector for gravity
         debugRenderer = new Box2DDebugRenderer();
         worldCreator = new WorldCreator(world, map);
-        player = new Arek(world);
+
+        // Setting up the character and sprite sheet atlas
+        arek = new TextureAtlas("SpriteSheet/Arek-SpriteSheet.atlas");
+        player = new Arek(world, this);
+
+        // Input buttons
+        buttons = new MovementButtons(this.levelController.batch);
+
+    }
+
+    public TextureAtlas getAtlas_Arek() {
+        return arek;
     }
 
     public void inputController() {
         // will be used to handle user input
-        if(Gdx.input.isTouched()) {
-            player.body.applyLinearImpulse(new Vector2(3, 6f), player.body.getWorldCenter(), true);
+        if(buttons.isRightPressed()) {
+            player.body.setLinearVelocity(60, 0);
+        }
+        else if(buttons.isLeftPressed()) {
+            player.body.setLinearVelocity(-60, 0);
+        }
+        else if(buttons.isJumpPressed()) {
+            player.body.setLinearVelocity(player.body.getLinearVelocity().x, 40);
         }
     }
 
@@ -63,6 +93,8 @@ public class Level_1 implements Screen {
         inputController();
 
         world.step(1/60f, 6, 2);
+
+        player.update();
 
         camera.position.x = player.body.getPosition().x;
         camera.position.y = player.body.getPosition().y;
@@ -87,6 +119,17 @@ public class Level_1 implements Screen {
 
         // FOR DEBUG ONLY
         debugRenderer.render(world, camera.combined);
+
+        // Render the sprite
+        levelController.batch.setProjectionMatrix(camera.combined);
+        levelController.batch.begin();
+        player.draw(levelController.batch);
+        levelController.batch.end();
+
+        // Render the UI
+        levelController.batch.setProjectionMatrix(buttons.stage.getCamera().combined);
+        buttons.stage.act(delta);
+        buttons.stage.draw();
     }
 
     @Override
