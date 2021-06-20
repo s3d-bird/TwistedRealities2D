@@ -21,6 +21,10 @@ public class Arek extends Sprite {
     private Animation run;
     private Animation jump;
 
+    public boolean isFacingRight() {
+        return facingRight;
+    }
+
     private boolean facingRight;
 
     private float timePassed;
@@ -63,12 +67,12 @@ public class Arek extends Sprite {
 
         frames.clear();
         defineCharacter();
-        setBounds(0, 0, 17, 32);
+        setBounds(0, 0, 19, 32);
     }
 
     public void defineCharacter() {
         BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set(32, 32);
+        bodyDef.position.set(160, 128); // the spawn location, set by the amount of tiles
         bodyDef.type = BodyDef.BodyType.DynamicBody;
 
         body = world.createBody(bodyDef);
@@ -117,7 +121,7 @@ public class Arek extends Sprite {
     }
 
     public State getCurrentState() {
-        if(body.getLinearVelocity().y > 0 || (body.getLinearVelocity().y < 0 && previousState==State.JUMPING))
+        if((body.getLinearVelocity().y > 0)|| (body.getLinearVelocity().y < 0 && previousState==State.JUMPING))
             return State.JUMPING;
         else if(body.getLinearVelocity().y < 0)
             return State.FALLING;

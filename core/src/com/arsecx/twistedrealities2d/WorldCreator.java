@@ -60,5 +60,19 @@ public class WorldCreator {
             fixtureDef.shape = shape;
             body.createFixture(fixtureDef);
         }
+
+        // The Border Wall, so player don't jump out of map
+        for (MapObject object : map.getLayers().get(8).getObjects().getByType(RectangleMapObject.class))
+        {
+            Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
+            bodyDef.type = BodyDef.BodyType.StaticBody;
+            bodyDef.position.set((rectangle.getX() + rectangle.getWidth()/2), (rectangle.getY() + rectangle.getHeight()/2));
+
+            body = world.createBody(bodyDef);
+
+            shape.setAsBox((rectangle.getWidth()/2), (rectangle.getHeight()/2));
+            fixtureDef.shape = shape;
+            body.createFixture(fixtureDef);
+        }
     }
 }

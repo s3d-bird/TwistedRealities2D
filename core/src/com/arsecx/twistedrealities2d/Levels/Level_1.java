@@ -48,6 +48,9 @@ public class Level_1 implements Screen {
     // UI Elements
     MovementButtons buttons;
 
+    // Move in jump check
+    private boolean movedAlready;
+
     public Level_1 (LevelController lvlController) {
         this.levelController = lvlController;
         camera = new OrthographicCamera();
@@ -69,6 +72,7 @@ public class Level_1 implements Screen {
         // Input buttons
         buttons = new MovementButtons(this.levelController.batch);
 
+        movedAlready = false;
     }
 
     public TextureAtlas getAtlas_Arek() {
@@ -77,14 +81,40 @@ public class Level_1 implements Screen {
 
     public void inputController() {
         // will be used to handle user input
-        if(buttons.isRightPressed()) {
-            player.body.setLinearVelocity(60, 0);
+        if(buttons.isRightPressed() && player.body.getLinearVelocity().y == 0 && player.currentState != Arek.State.FALLING ) {
+            if(buttons.isJumpPressed()) {
+                player.body.setLinearVelocity(120, 110);
+            }
+            else
+                player.body.setLinearVelocity(100, 0);
         }
-        else if(buttons.isLeftPressed()) {
-            player.body.setLinearVelocity(-60, 0);
+        else if(buttons.isLeftPressed() && player.currentState != Arek.State.FALLING && player.body.getLinearVelocity().y == 0 ) {
+            if(buttons.isJumpPressed()){
+                player.body.setLinearVelocity(-120, 110);
+            }
+            else
+                player.body.setLinearVelocity(-100, 0);
         }
-        else if(buttons.isJumpPressed()) {
-            player.body.setLinearVelocity(player.body.getLinearVelocity().x, 40);
+//        else if(buttons.isRightPressed() && (player.currentState == Arek.State.FALLING || player.currentState == Arek.State.JUMPING) && player.body.getLinearVelocity().x <=40) {
+//
+//            player.body.setLinearVelocity(40, 0);
+//        }
+//        else if(buttons.isRightPressed() && buttons.isJumpPressed()) {
+//            player.body.setLinearVelocity(player.body.getLinearVelocity().x + 20f, 60);
+//        }
+//        else if(buttons.isLeftPressed() && buttons.isJumpPressed()) {
+//            player.body.setLinearVelocity(-(player.body.getLinearVelocity().x - 20f), 60);
+//        }
+        else if(buttons.isJumpPressed() && player.currentState != Arek.State.JUMPING) {
+            if(player.isFacingRight()) {
+                player.body.setLinearVelocity(player.body.getLinearVelocity().x + 220, 130);
+            }
+            else if (!player.isFacingRight()) {
+                player.body.setLinearVelocity(player.body.getLinearVelocity().x - 220, 130);
+            }
+        }
+        else if(!buttons.isJumpPressed() && !buttons.isLeftPressed() && !buttons.isRightPressed()) {
+            player.body.setLinearVelocity(0, player.body.getLinearVelocity().y);
         }
     }
 
