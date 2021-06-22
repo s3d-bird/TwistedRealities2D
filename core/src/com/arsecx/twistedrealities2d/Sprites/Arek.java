@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
@@ -79,8 +80,12 @@ public class Arek extends Sprite {
 
         FixtureDef fixtureDef = new FixtureDef();
 
-        CircleShape shape = new CircleShape();
-        shape.setRadius(16);
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(17/2f, 15.6f);
+//        shape.setRadius(1);
+
+//        CircleShape shape = new CircleShape();
+//        shape.setRadius(15.8f);
 
         fixtureDef.shape = shape;
         body.createFixture(fixtureDef);

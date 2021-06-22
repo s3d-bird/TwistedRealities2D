@@ -48,7 +48,7 @@ public class Level_1 implements Screen {
     // UI Elements
     MovementButtons buttons;
 
-    // Move in jump check
+    // Turn Around and move while jump check
     private boolean movedAlready;
 
     public Level_1 (LevelController lvlController) {
@@ -82,20 +82,22 @@ public class Level_1 implements Screen {
     public void inputController() {
         // will be used to handle user input
         if(buttons.isRightPressed() && player.body.getLinearVelocity().y == 0 && player.currentState != Arek.State.FALLING ) {
+            movedAlready = false; // a temporary fix to detect that player is on ground
             if(buttons.isJumpPressed()) {
-                player.body.setLinearVelocity(120, 110);
+                player.body.setLinearVelocity(120, 150);
             }
             else
                 player.body.setLinearVelocity(100, 0);
         }
         else if(buttons.isLeftPressed() && player.currentState != Arek.State.FALLING && player.body.getLinearVelocity().y == 0 ) {
+            movedAlready = false;
             if(buttons.isJumpPressed()){
                 player.body.setLinearVelocity(-120, 110);
             }
             else
                 player.body.setLinearVelocity(-100, 0);
         }
-//        else if(buttons.isRightPressed() && (player.currentState == Arek.State.FALLING || player.currentState == Arek.State.JUMPING) && player.body.getLinearVelocity().x <=40) {
+//        else if(buttons.isRightPressed () && (player.currentState == Arek.State.FALLING || player.currentState == Arek.State.JUMPING) && player.body.getLinearVelocity().x <=40) {
 //
 //            player.body.setLinearVelocity(40, 0);
 //        }
@@ -111,6 +113,29 @@ public class Level_1 implements Screen {
             }
             else if (!player.isFacingRight()) {
                 player.body.setLinearVelocity(player.body.getLinearVelocity().x - 220, 130);
+            }
+
+        }
+//        else if(buttons.isJumpPressed()) {
+//            if(buttons.isRightPressed() && player.currentState == Arek.State.JUMPING) {
+//                player.body.setLinearVelocity(player.body.getLinearVelocity().x+10, player.body.getLinearVelocity().y);
+//            }
+//            else if (buttons.isLeftPressed() && player.currentState == Arek.State.JUMPING) {
+//                player.body.setLinearVelocity(player.body.getLinearVelocity().x-10, player.body.getLinearVelocity().y);
+//            }
+//        }
+        else if(buttons.isRightPressed() && player.body.getLinearVelocity().y != 0) // turn while in air
+        {
+            if(!movedAlready) { // if player hasn't already moved; without this check; player will just fly
+                player.body.setLinearVelocity(player.body.getLinearVelocity().x+100, player.body.getLinearVelocity().y);
+                movedAlready = true;
+            }
+        }
+        else if(buttons.isLeftPressed() && player.body.getLinearVelocity().y != 0)
+        {
+            if(!movedAlready) { // if player hasn't already moved; without this check; player will just fly
+                player.body.setLinearVelocity(player.body.getLinearVelocity().x-100, player.body.getLinearVelocity().y);
+                movedAlready = true;
             }
         }
         else if(!buttons.isJumpPressed() && !buttons.isLeftPressed() && !buttons.isRightPressed()) {
