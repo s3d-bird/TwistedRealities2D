@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="103" height="19" tilewidth="32" tileheight="32" infinite="0" nextlayerid="12" nextobjectid="112">
- <tileset firstgid="1" source="TwistedRealities2D-c5e87cf0d4c01bc19929e70385e56fa55e01058b/android/assets/Level_1/Grass_Tileset.tsx"/>
- <tileset firstgid="13" source="TwistedRealities2D-c5e87cf0d4c01bc19929e70385e56fa55e01058b/android/assets/Level_1/Terrain.tsx"/>
- <tileset firstgid="1037" source="TwistedRealities2D-c5e87cf0d4c01bc19929e70385e56fa55e01058b/android/assets/Level_1/Others.tsx"/>
+ <tileset firstgid="1" source="Grass_Tileset.tsx"/>
+ <tileset firstgid="13" source="Terrain.tsx"/>
+ <tileset firstgid="1037" source="Others.tsx"/>
  <layer id="1" name="Level_1" width="103" height="19">
   <data encoding="csv">
 189,189,189,442,504,504,475,505,507,504,507,505,475,475,505,504,443,504,506,411,411,475,504,475,505,475,504,505,475,411,505,505,411,507,504,443,443,504,507,475,505,504,475,504,443,506,507,505,504,475,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,282,
