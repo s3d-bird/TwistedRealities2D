@@ -3,23 +3,30 @@ Arek-SpriteSheet.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-character-run
+DeathAnims
   rotate: false
   xy: 1, 1
+  size: 135, 32
+  orig: 135, 32
+  offset: 0, 0
+  index: -1
+character-run
+  rotate: false
+  xy: 138, 1
   size: 114, 32
   orig: 114, 32
   offset: 0, 0
   index: -1
 character-jump
   rotate: false
-  xy: 117, 1
+  xy: 254, 1
   size: 99, 32
   orig: 99, 32
   offset: 0, 0
   index: -1
 character-idle
   rotate: false
-  xy: 218, 1
+  xy: 355, 1
   size: 68, 32
   orig: 68, 32
   offset: 0, 0

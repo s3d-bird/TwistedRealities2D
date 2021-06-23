@@ -1,5 +1,6 @@
 package com.arsecx.twistedrealities2d.Levels;
 
+import com.arsecx.twistedrealities2d.CollisionDetector;
 import com.arsecx.twistedrealities2d.LevelController;
 import com.arsecx.twistedrealities2d.Sprites.Arek;
 import com.arsecx.twistedrealities2d.UIElements.MovementButtons;
@@ -68,7 +69,7 @@ public class Level_1 implements Screen {
         // Setting up the character and sprite sheet atlas
         arek = new TextureAtlas("SpriteSheet/Arek-SpriteSheet.atlas");
         player = new Arek(world, this);
-
+        world.setContactListener(new CollisionDetector());
         // Input buttons
         buttons = new MovementButtons(this.levelController.batch);
 
