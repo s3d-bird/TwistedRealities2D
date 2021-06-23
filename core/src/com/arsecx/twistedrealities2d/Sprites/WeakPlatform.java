@@ -3,7 +3,6 @@ package com.arsecx.twistedrealities2d.Sprites;
 import com.arsecx.twistedrealities2d.LevelController;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 

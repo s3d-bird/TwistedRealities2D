@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -19,11 +18,10 @@ import com.badlogic.gdx.utils.Array;
 public class Arek extends Sprite {
     public World world;
     public Body body;
-    private Array<TextureRegion> frames;
-    private Animation idle;
-    private Animation run;
-    private Animation jump;
-    private Animation death_spike;
+    private final Animation<TextureRegion> idle;
+    private final Animation<TextureRegion> run;
+    private final Animation<TextureRegion> jump;
+    private final Animation<TextureRegion> death_spike;
 
     public boolean isFacingRight() {
         return facingRight;
@@ -32,7 +30,7 @@ public class Arek extends Sprite {
     private boolean facingRight;
 
     private float timePassed;
-    public enum State {IDLE, RUNNING, JUMPING, FALLING, DEATH_SPIKE};
+    public enum State {IDLE, RUNNING, JUMPING, FALLING, DEATH_SPIKE}
     public State currentState;
     public State previousState;
     public Arek(World world, Level_1 level1) {
@@ -42,12 +40,12 @@ public class Arek extends Sprite {
         previousState = State.IDLE;
         timePassed = 0;
         facingRight = true;
-        frames = new Array<>();
+        Array<TextureRegion> frames = new Array<>();
 
         for(int i = 1; i < 5; i++) { // 4 frames for idle
             frames.add(new TextureRegion(getTexture(),  338+(i * 17), 1, 17, 32));
         }
-        idle = new Animation(1/3f, frames);
+        idle = new Animation<>(1/3f, frames);
 
         frames.clear();
 
@@ -56,7 +54,7 @@ public class Arek extends Sprite {
         frames.add(new TextureRegion(getTexture(), 301, 1, 25, 30)); // jump anim 3
         frames.add(new TextureRegion(getTexture(), 326, 1, 27, 32)); // jump anim 4
 
-        jump = new Animation(0.1f, frames);
+        jump = new Animation<>(0.1f, frames);
 
         frames.clear();
 
@@ -67,7 +65,7 @@ public class Arek extends Sprite {
         frames.add(new TextureRegion(getTexture(), 218, 1, 15, 32));
         frames.add(new TextureRegion(getTexture(), 233, 1, 19, 32));
 
-        run = new Animation(0.1f, frames);
+        run = new Animation<>(0.1f, frames);
 
         frames.clear();
 
@@ -78,8 +76,7 @@ public class Arek extends Sprite {
         frames.add(new TextureRegion(getTexture(), 86, 1, 25, 11));
         frames.add(new TextureRegion(getTexture(), 111, 1, 25, 8));
 
-        death_spike = new Animation(0.1f, frames);
-
+        death_spike = new Animation<>(1/4f, frames);
         frames.clear();
 
         defineCharacter();
@@ -88,7 +85,7 @@ public class Arek extends Sprite {
 
     public void defineCharacter() {
         BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set(156, 156); // the spawn location, set by the amount of tiles
+        bodyDef.position.set(196, 156); // the spawn location, set by the amount of tiles
         bodyDef.type = BodyDef.BodyType.DynamicBody;
 
         body = world.createBody(bodyDef);
@@ -127,17 +124,19 @@ public class Arek extends Sprite {
         currentState = getCurrentState();
         switch (currentState) {
             case JUMPING:
-                region = (TextureRegion) jump.getKeyFrame(timePassed);
+                region = jump.getKeyFrame(timePassed);
                 break;
             case RUNNING:
-                region = (TextureRegion) run.getKeyFrame(timePassed, true);
+                region = run.getKeyFrame(timePassed, true);
                 break;
             case FALLING:
             case IDLE:
-                region = (TextureRegion) idle.getKeyFrame(timePassed, true);
+                region = idle.getKeyFrame(timePassed, true);
                 break;
             case DEATH_SPIKE:
-                region = (TextureRegion) death_spike.getKeyFrame(timePassed);
+                region = death_spike.getKeyFrame(timePassed);
+//                System.out.println(timePassed);
+                break;
         }
         if((body.getLinearVelocity().x < 0 || !facingRight) && !region.isFlipX()) {
             region.flip(true, false);
@@ -154,12 +153,17 @@ public class Arek extends Sprite {
     }
 
     public State getCurrentState() {
-        if((body.getLinearVelocity().y > 0)|| (body.getLinearVelocity().y < 0 && previousState==State.JUMPING))
-            return State.JUMPING;
-        else if(body.getLinearVelocity().y < 0)
-            return State.FALLING;
-        else if(body.getLinearVelocity().x != 0)
-            return State.RUNNING;
-        else return State.IDLE;
+//        System.out.println(body.getFixtureList().get(1).getUserData());
+        if (body.getFixtureList().get(1).getUserData() == "death_spike") {
+            return State.DEATH_SPIKE;
+        } else {
+            if ((body.getLinearVelocity().y > 0) || (body.getLinearVelocity().y < 0 && previousState == State.JUMPING))
+                return State.JUMPING;
+            else if (body.getLinearVelocity().y < 0)
+                return State.FALLING;
+            else if (body.getLinearVelocity().x != 0)
+                return State.RUNNING;
+            else return State.IDLE;
+        }
     }
 }

@@ -6,7 +6,6 @@ import com.arsecx.twistedrealities2d.Sprites.Arek;
 import com.arsecx.twistedrealities2d.UIElements.MovementButtons;
 import com.arsecx.twistedrealities2d.WorldCreator;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
@@ -16,12 +15,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -32,19 +26,19 @@ public class Level_1 implements Screen {
     Camera camera; // character follow camera; or the main basic camera
     WorldCreator worldCreator;
     // TILEMAP Loader
-    private TiledMap map;
-    private OrthogonalTiledMapRenderer renderer;
+    private final TiledMap map;
+    private final OrthogonalTiledMapRenderer renderer;
 
     // Box 2D World
-    private World world;
-    private Box2DDebugRenderer debugRenderer; // This renderer is for development only
+    private final World world;
+//    private Box2DDebugRenderer debugRenderer; // This renderer is for development only
     // TODO Remove this renderer before releasing the game
 
     // Sprites
-    private Arek player;
+    private final Arek player;
 
     // Texture loader for Sprite Sheets
-    private TextureAtlas arek;
+    private final TextureAtlas arek;
 
     // UI Elements
     MovementButtons buttons;
@@ -63,7 +57,7 @@ public class Level_1 implements Screen {
 
         // creating the world
         world = new World(new Vector2(0, -100), true); // Vector2 is the vector for gravity
-        debugRenderer = new Box2DDebugRenderer();
+//        debugRenderer = new Box2DDebugRenderer();
         worldCreator = new WorldCreator(world, map);
 
         // Setting up the character and sprite sheet atlas
@@ -85,18 +79,18 @@ public class Level_1 implements Screen {
         if(buttons.isRightPressed() && player.body.getLinearVelocity().y == 0 && player.currentState != Arek.State.FALLING ) {
             movedAlready = false; // a temporary fix to detect that player is on ground
             if(buttons.isJumpPressed()) {
-                player.body.setLinearVelocity(120, 150);
+                player.body.setLinearVelocity(250, 165);
             }
             else
-                player.body.setLinearVelocity(100, 0);
+                player.body.setLinearVelocity(220, 0);
         }
         else if(buttons.isLeftPressed() && player.currentState != Arek.State.FALLING && player.body.getLinearVelocity().y == 0 ) {
             movedAlready = false;
             if(buttons.isJumpPressed()){
-                player.body.setLinearVelocity(-120, 110);
+                player.body.setLinearVelocity(-250, 165);
             }
             else
-                player.body.setLinearVelocity(-100, 0);
+                player.body.setLinearVelocity(-220, 0);
         }
 //        else if(buttons.isRightPressed () && (player.currentState == Arek.State.FALLING || player.currentState == Arek.State.JUMPING) && player.body.getLinearVelocity().x <=40) {
 //
@@ -110,10 +104,10 @@ public class Level_1 implements Screen {
 //        }
         else if(buttons.isJumpPressed() && player.currentState != Arek.State.JUMPING) {
             if(player.isFacingRight()) {
-                player.body.setLinearVelocity(player.body.getLinearVelocity().x + 220, 130);
+                player.body.setLinearVelocity(player.body.getLinearVelocity().x + 150, 130);
             }
             else if (!player.isFacingRight()) {
-                player.body.setLinearVelocity(player.body.getLinearVelocity().x - 220, 130);
+                player.body.setLinearVelocity(player.body.getLinearVelocity().x - 150, 130);
             }
 
         }
@@ -149,9 +143,13 @@ public class Level_1 implements Screen {
         inputController();
 
         world.step(1/60f, 6, 2);
-
+//        if(player.isOnLand()) {
+//            movedAlready = false;
+//        }
         player.update();
-
+//        if(player.body.getUserData() == "death_spike") {
+//            Gdx.app.log("asdasd", "");
+//        }
         camera.position.x = player.body.getPosition().x;
         camera.position.y = player.body.getPosition().y;
         camera.update();
@@ -174,7 +172,7 @@ public class Level_1 implements Screen {
         renderer.render(); // render the map
 
         // FOR DEBUG ONLY
-        debugRenderer.render(world, camera.combined);
+//        debugRenderer.render(world, camera.combined);
 
         // Render the sprite
         levelController.batch.setProjectionMatrix(camera.combined);
@@ -213,7 +211,7 @@ public class Level_1 implements Screen {
         map.dispose();
         renderer.dispose();
         world.dispose();
-        debugRenderer.dispose();
+//        debugRenderer.dispose();
 
     }
 }
