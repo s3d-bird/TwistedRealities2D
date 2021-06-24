@@ -3,6 +3,7 @@ package com.arsecx.twistedrealities2d.Levels;
 import com.arsecx.twistedrealities2d.CollisionDetector;
 import com.arsecx.twistedrealities2d.LevelController;
 import com.arsecx.twistedrealities2d.Sprites.Arek;
+import com.arsecx.twistedrealities2d.UIElements.GameOver;
 import com.arsecx.twistedrealities2d.UIElements.MovementButtons;
 import com.arsecx.twistedrealities2d.WorldCreator;
 import com.badlogic.gdx.Gdx;
@@ -36,14 +37,14 @@ public class Level_1 implements Screen {
     // TODO Remove this renderer before releasing the game
 
     // Sprites
-    private final Arek player;
+    private Arek player;
 
     // Texture loader for Sprite Sheets
     private final TextureAtlas arek;
 
     // UI Elements
     MovementButtons buttons;
-
+GameOver gameOverScreen;
     // Turn Around and move while jump check
     private boolean movedAlready;
     private boolean hasDoubleJumped;
@@ -68,6 +69,8 @@ public class Level_1 implements Screen {
         world.setContactListener(new CollisionDetector());
         // Input buttons
         buttons = new MovementButtons(this.levelController.batch);
+        //GameOver Screen
+        gameOverScreen= new GameOver ( levelController.batch );
 
         movedAlready = false;
         hasDoubleJumped = false;
@@ -200,12 +203,34 @@ public class Level_1 implements Screen {
         levelController.batch.setProjectionMatrix(buttons.stage.getCamera().combined);
         buttons.stage.act(delta);
         buttons.stage.draw();
+
+        if(player.currentState == Arek.State.DEATH_SPIKE) {
+                gameOver ();
+        }
     }
 
+    public void gameOver() {
+        levelController.batch.setProjectionMatrix(gameOverScreen.stage.getCamera().combined);
+        gameOverScreen.stage.act(Gdx.graphics.getDeltaTime());
+        gameOverScreen.stage.draw();
+        buttons.stage.clear();
+        Gdx.input.setInputProcessor ( gameOverScreen.stage );
+        if (gameOverScreen.isRetryPressed ( )) {
+
+            player.currentState = Arek.State.IDLE;
+            player = new Arek(world, this );
+            buttons = new MovementButtons(this.levelController.batch);
+            buttons.stage.act(Gdx.graphics.getDeltaTime());
+            buttons.stage.draw ();
+            gameOverScreen.stage.clear ();
+            Gdx.input.setInputProcessor ( buttons.stage );
+        }
+    }
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
         buttons.stage.getViewport().update(width, height);
+        gameOverScreen.stage.getViewport().update(width, height);
     }
 
     @Override
@@ -231,4 +256,5 @@ public class Level_1 implements Screen {
         debugRenderer.dispose();
 
     }
+
 }

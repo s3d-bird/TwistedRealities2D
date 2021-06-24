@@ -21,6 +21,7 @@ public class MovementButtons {
 
     public boolean isDoubleJmpPressed() {
         return doubleJmpPressed;
+
     }
 
     public ImageButton btn_LeftMove;
