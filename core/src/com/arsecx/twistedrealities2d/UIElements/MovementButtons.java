@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -18,13 +19,18 @@ public class MovementButtons {
     public Stage stage;
     private Table table;
 
+    public boolean isDoubleJmpPressed() {
+        return doubleJmpPressed;
+    }
+
     public ImageButton btn_LeftMove;
     public ImageButton btn_RightMove;
     private ImageButton btn_Jump;
+    private ImageButton btn_DblJump;
 
     private Viewport viewport;
 
-    private boolean leftPressed, rightPressed, jumpPressed;
+    private boolean leftPressed, rightPressed, jumpPressed, doubleJmpPressed;
 
     public MovementButtons(SpriteBatch batch) {
         viewport = new FitViewport(256, 144, new OrthographicCamera());
@@ -48,6 +54,8 @@ public class MovementButtons {
         btn_RightMove = new ImageButton(txtRgDr_BtnRt);
         btn_LeftMove = new ImageButton(txtRgDr_BtnLft);
         btn_Jump = new ImageButton(txtRgDr_BtnJmp);
+        btn_DblJump = new ImageButton(txtRgDr_BtnJmp);
+
         btn_RightMove.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -87,12 +95,35 @@ public class MovementButtons {
             }
         });
 
-        table.row();
-        table.row();
-        table.add(btn_Jump).expandX().pad(5);
-        table.add(btn_LeftMove).align(-10).expandX().pad(5);
-        table.add(btn_RightMove).align(-10).expandX().pad(5);
+        btn_DblJump.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                doubleJmpPressed = true;
+                return true;
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                doubleJmpPressed = false;
+            }
+        });
+
+
+
+        table.align(Align.bottomRight);
+        table.add(btn_LeftMove).align(Align.right).size(btn_LeftMove.getWidth(), btn_RightMove.getHeight());
+        table.add(btn_RightMove).align(Align.right).size(btn_RightMove.getWidth(), btn_RightMove.getHeight()).right();
         table.setFillParent(true);
+
+        stage.addActor(table);
+
+        table = new Table();
+        table.bottom();
+        table.align(Align.bottomLeft);
+        table.setFillParent(true);
+        table.add(btn_DblJump).size(btn_DblJump.getWidth(), btn_DblJump.getHeight()).align(10);
+        table.row();
+        table.add(btn_Jump).size(btn_Jump.getWidth(), btn_DblJump.getHeight());
 
         stage.addActor(table);
     }

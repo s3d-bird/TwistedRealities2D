@@ -15,6 +15,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -31,7 +32,7 @@ public class Level_1 implements Screen {
 
     // Box 2D World
     private final World world;
-//    private Box2DDebugRenderer debugRenderer; // This renderer is for development only
+    private Box2DDebugRenderer debugRenderer; // This renderer is for development only
     // TODO Remove this renderer before releasing the game
 
     // Sprites
@@ -45,6 +46,7 @@ public class Level_1 implements Screen {
 
     // Turn Around and move while jump check
     private boolean movedAlready;
+    private boolean hasDoubleJumped;
 
     public Level_1 (LevelController lvlController) {
         this.levelController = lvlController;
@@ -57,7 +59,7 @@ public class Level_1 implements Screen {
 
         // creating the world
         world = new World(new Vector2(0, -100), true); // Vector2 is the vector for gravity
-//        debugRenderer = new Box2DDebugRenderer();
+        debugRenderer = new Box2DDebugRenderer();
         worldCreator = new WorldCreator(world, map);
 
         // Setting up the character and sprite sheet atlas
@@ -68,6 +70,7 @@ public class Level_1 implements Screen {
         buttons = new MovementButtons(this.levelController.batch);
 
         movedAlready = false;
+        hasDoubleJumped = false;
     }
 
     public TextureAtlas getAtlas_Arek() {
@@ -78,6 +81,7 @@ public class Level_1 implements Screen {
         // will be used to handle user input
         if(buttons.isRightPressed() && player.body.getLinearVelocity().y == 0 && player.currentState != Arek.State.FALLING ) {
             movedAlready = false; // a temporary fix to detect that player is on ground
+            hasDoubleJumped = false;
             if(buttons.isJumpPressed()) {
                 player.body.setLinearVelocity(250, 165);
             }
@@ -86,6 +90,7 @@ public class Level_1 implements Screen {
         }
         else if(buttons.isLeftPressed() && player.currentState != Arek.State.FALLING && player.body.getLinearVelocity().y == 0 ) {
             movedAlready = false;
+            hasDoubleJumped = false;
             if(buttons.isJumpPressed()){
                 player.body.setLinearVelocity(-250, 165);
             }
@@ -111,6 +116,17 @@ public class Level_1 implements Screen {
             }
 
         }
+        else if(buttons.isDoubleJmpPressed() && !hasDoubleJumped && player.body.getLinearVelocity().y != 0) {
+            System.out.println("boooo");
+            if(player.isFacingRight()) {
+                player.body.setLinearVelocity(player.body.getLinearVelocity().x + 100, 90);
+                hasDoubleJumped = true;
+            }
+            else if (!player.isFacingRight()) {
+                player.body.setLinearVelocity(player.body.getLinearVelocity().x - 100, 90);
+                hasDoubleJumped = true;
+            }
+        }
 //        else if(buttons.isJumpPressed()) {
 //            if(buttons.isRightPressed() && player.currentState == Arek.State.JUMPING) {
 //                player.body.setLinearVelocity(player.body.getLinearVelocity().x+10, player.body.getLinearVelocity().y);
@@ -122,14 +138,14 @@ public class Level_1 implements Screen {
         else if(buttons.isRightPressed() && player.body.getLinearVelocity().y != 0) // turn while in air
         {
             if(!movedAlready) { // if player hasn't already moved; without this check; player will just fly
-                player.body.setLinearVelocity(player.body.getLinearVelocity().x+100, player.body.getLinearVelocity().y);
+                player.body.setLinearVelocity(player.body.getLinearVelocity().x+30, player.body.getLinearVelocity().y);
                 movedAlready = true;
             }
         }
         else if(buttons.isLeftPressed() && player.body.getLinearVelocity().y != 0)
         {
             if(!movedAlready) { // if player hasn't already moved; without this check; player will just fly
-                player.body.setLinearVelocity(player.body.getLinearVelocity().x-100, player.body.getLinearVelocity().y);
+                player.body.setLinearVelocity(player.body.getLinearVelocity().x-30, player.body.getLinearVelocity().y);
                 movedAlready = true;
             }
         }
@@ -172,7 +188,7 @@ public class Level_1 implements Screen {
         renderer.render(); // render the map
 
         // FOR DEBUG ONLY
-//        debugRenderer.render(world, camera.combined);
+        debugRenderer.render(world, camera.combined);
 
         // Render the sprite
         levelController.batch.setProjectionMatrix(camera.combined);
@@ -189,6 +205,7 @@ public class Level_1 implements Screen {
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
+        buttons.stage.getViewport().update(width, height);
     }
 
     @Override
@@ -211,7 +228,7 @@ public class Level_1 implements Screen {
         map.dispose();
         renderer.dispose();
         world.dispose();
-//        debugRenderer.dispose();
+        debugRenderer.dispose();
 
     }
 }
