@@ -216,14 +216,16 @@ GameOver gameOverScreen;
         buttons.stage.clear();
         Gdx.input.setInputProcessor ( gameOverScreen.stage );
         if (gameOverScreen.isRetryPressed ( )) {
+            levelController.setScreen(new Level_1(levelController));
+//            player.currentState = Arek.State.IDLE;
+//            player = new Arek(world, this );
+//            buttons = new MovementButtons(this.levelController.batch);
+//            worldCreator = new WorldCreator(world, map);
+//            buttons.stage.act(Gdx.graphics.getDeltaTime());
+//            buttons.stage.draw ();
+//            gameOverScreen.stage.clear ();
+//            Gdx.input.setInputProcessor ( buttons.stage );
 
-            player.currentState = Arek.State.IDLE;
-            player = new Arek(world, this );
-            buttons = new MovementButtons(this.levelController.batch);
-            buttons.stage.act(Gdx.graphics.getDeltaTime());
-            buttons.stage.draw ();
-            gameOverScreen.stage.clear ();
-            Gdx.input.setInputProcessor ( buttons.stage );
         }
     }
     @Override
