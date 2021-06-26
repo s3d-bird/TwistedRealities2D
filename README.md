@@ -1,8 +1,8 @@
 # TwistedRealities2D
 A 2D Puzzle platformer written for Android only in libGDX <br />
-This game is just a preview of what the original game is meant to be, which will be implemented later in Godot Engine
-You are free to use the code under the MIT License
-The current code as is; is meant for a Semster Project of the Owner and a classmate
+This game is just a preview of what the original game is meant to be, which will be implemented later in Godot Engine  <br />
+You are free to use the code under the MIT License  <br />
+The current code as is; is meant for a Semster Project of the Owner and a classmate  <br />
 
 # Assets Used from(Attribution):
   1) Grass Tileset  <br />
