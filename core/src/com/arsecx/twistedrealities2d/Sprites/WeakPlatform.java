@@ -25,6 +25,6 @@ public class WeakPlatform extends InteractiveTiles {
                 Gdx.app.log("Collision on breakable" , "dd");
                 getCell().setTile(null);
             }
-        }, 5000);
+        }, 4000);
     }
 }

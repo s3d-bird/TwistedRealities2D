@@ -9,17 +9,15 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class GameOver {
+public class GameOver implements Disposable {
     public Stage stage;
-    private Table table;
 
-    private Viewport viewport;
-
-    private Label gameOverLabel;
-    private Label retryLabel;
+    private final Label gameOverLabel;
+    private final Label retryLabel;
 
     private boolean retryPressed;
 
@@ -28,10 +26,10 @@ public class GameOver {
     }
 
     public GameOver(SpriteBatch batch) {
-        viewport = new FitViewport(256, 144, new OrthographicCamera());
+        Viewport viewport = new FitViewport(256, 144, new OrthographicCamera());
         stage = new Stage(viewport, batch);
 //        Gdx.input.setInputProcessor(stage);
-        table = new Table();
+        Table table = new Table();
         table.center();
 
         gameOverLabel = new Label("GAME OVER", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
@@ -58,6 +56,11 @@ public class GameOver {
         table.add(retryLabel);
         stage.addActor(table);
 
+    }
+
+    @Override
+    public void dispose() {
+        stage.dispose();
     }
 }
 

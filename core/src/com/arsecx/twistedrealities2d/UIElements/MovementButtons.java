@@ -12,12 +12,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class MovementButtons {
+public class MovementButtons implements Disposable {
     public Stage stage;
-    private Table table;
 
     public boolean isDoubleJmpPressed() {
         return doubleJmpPressed;
@@ -26,18 +26,14 @@ public class MovementButtons {
 
     public ImageButton btn_LeftMove;
     public ImageButton btn_RightMove;
-    private ImageButton btn_Jump;
-    private ImageButton btn_DblJump;
-
-    private Viewport viewport;
 
     private boolean leftPressed, rightPressed, jumpPressed, doubleJmpPressed;
 
     public MovementButtons(SpriteBatch batch) {
-        viewport = new FitViewport(256, 144, new OrthographicCamera());
+        Viewport viewport = new FitViewport(256, 144, new OrthographicCamera());
         stage = new Stage(viewport, batch);
         Gdx.input.setInputProcessor(stage);
-        table = new Table();
+        Table table = new Table();
         table.bottom();
 
         Texture textureBtnRight = new Texture("UIElements/ArrowRight.png");
@@ -54,8 +50,8 @@ public class MovementButtons {
 
         btn_RightMove = new ImageButton(txtRgDr_BtnRt);
         btn_LeftMove = new ImageButton(txtRgDr_BtnLft);
-        btn_Jump = new ImageButton(txtRgDr_BtnJmp);
-        btn_DblJump = new ImageButton(txtRgDr_BtnJmp);
+        ImageButton btn_Jump = new ImageButton(txtRgDr_BtnJmp);
+        ImageButton btn_DblJump = new ImageButton(txtRgDr_BtnJmp);
 
         btn_RightMove.addListener(new InputListener() {
             @Override
@@ -139,5 +135,10 @@ public class MovementButtons {
 
     public boolean isJumpPressed() {
         return jumpPressed;
+    }
+
+    @Override
+    public void dispose() {
+        stage.dispose();
     }
 }

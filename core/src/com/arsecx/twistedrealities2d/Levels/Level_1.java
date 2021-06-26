@@ -16,7 +16,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -33,18 +32,16 @@ public class Level_1 implements Screen {
 
     // Box 2D World
     private final World world;
-    private Box2DDebugRenderer debugRenderer; // This renderer is for development only
-    // TODO Remove this renderer before releasing the game
 
     // Sprites
-    private Arek player;
+    private final Arek player;
 
     // Texture loader for Sprite Sheets
     private final TextureAtlas arek;
 
     // UI Elements
     MovementButtons buttons;
-GameOver gameOverScreen;
+    GameOver gameOverScreen;
     // Turn Around and move while jump check
     private boolean movedAlready;
     private boolean hasDoubleJumped;
@@ -60,7 +57,6 @@ GameOver gameOverScreen;
 
         // creating the world
         world = new World(new Vector2(0, -100), true); // Vector2 is the vector for gravity
-        debugRenderer = new Box2DDebugRenderer();
         worldCreator = new WorldCreator(world, map);
 
         // Setting up the character and sprite sheet atlas
@@ -190,9 +186,6 @@ GameOver gameOverScreen;
         // further code will be added when HUD and Level are created
         renderer.render(); // render the map
 
-        // FOR DEBUG ONLY
-        debugRenderer.render(world, camera.combined);
-
         // Render the sprite
         levelController.batch.setProjectionMatrix(camera.combined);
         levelController.batch.begin();
@@ -216,6 +209,7 @@ GameOver gameOverScreen;
         buttons.stage.clear();
         Gdx.input.setInputProcessor ( gameOverScreen.stage );
         if (gameOverScreen.isRetryPressed ( )) {
+            dispose();
             levelController.setScreen(new Level_1(levelController));
 //            player.currentState = Arek.State.IDLE;
 //            player = new Arek(world, this );
@@ -255,8 +249,8 @@ GameOver gameOverScreen;
         map.dispose();
         renderer.dispose();
         world.dispose();
-        debugRenderer.dispose();
-
+        gameOverScreen.dispose();
+        buttons.dispose();
     }
 
 }
