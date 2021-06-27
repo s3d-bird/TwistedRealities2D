@@ -5,6 +5,8 @@ import com.arsecx.twistedrealities2d.LevelController;
 import com.arsecx.twistedrealities2d.Sprites.Arek;
 import com.arsecx.twistedrealities2d.UIElements.GameOver;
 import com.arsecx.twistedrealities2d.UIElements.MovementButtons;
+import com.arsecx.twistedrealities2d.UIElements.ScoreTracker;
+import com.arsecx.twistedrealities2d.UIElements.WinScreen;
 import com.arsecx.twistedrealities2d.WorldCreator;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -42,6 +44,11 @@ public class Level_1 implements Screen {
     // UI Elements
     MovementButtons buttons;
     GameOver gameOverScreen;
+    ScoreTracker scoreTracker;
+    WinScreen gameWonScreen;
+    int timeTaken;
+    boolean gameWon;
+    boolean gameOver;
     // Turn Around and move while jump check
     private boolean movedAlready;
     private boolean hasDoubleJumped;
@@ -67,9 +74,15 @@ public class Level_1 implements Screen {
         buttons = new MovementButtons(this.levelController.batch);
         //GameOver Screen
         gameOverScreen= new GameOver ( levelController.batch );
+        // Score keeper
+        scoreTracker = new ScoreTracker(levelController.batch);
+        // GameWon Screen
+        gameWonScreen = new WinScreen(lvlController.batch);
 
         movedAlready = false;
         hasDoubleJumped = false;
+        timeTaken = 0;
+        gameWon = gameOver = false;
     }
 
     public TextureAtlas getAtlas_Arek() {
@@ -116,7 +129,7 @@ public class Level_1 implements Screen {
 
         }
         else if(buttons.isDoubleJmpPressed() && !hasDoubleJumped && player.body.getLinearVelocity().y != 0) {
-            System.out.println("boooo");
+
             if(player.isFacingRight()) {
                 player.body.setLinearVelocity(player.body.getLinearVelocity().x + 100, 90);
                 hasDoubleJumped = true;
@@ -192,34 +205,52 @@ public class Level_1 implements Screen {
         player.draw(levelController.batch);
         levelController.batch.end();
 
+        // Load the timer first, since it's res is higher
+        levelController.batch.setProjectionMatrix(scoreTracker.stage.getCamera().combined);
+        scoreTracker.stage.act();
+        scoreTracker.stage.draw();
+
         // Render the UI
         levelController.batch.setProjectionMatrix(buttons.stage.getCamera().combined);
         buttons.stage.act(delta);
         buttons.stage.draw();
 
+        if(!gameWon && !gameOver)
+            scoreTracker.setTimeTaken();
+
         if(player.currentState == Arek.State.DEATH_SPIKE) {
-                gameOver ();
+            gameOver = true;
+            gameOver ();
+        }
+
+
+        if (player.body.getPosition().x >= 5054.0 && (player.body.getPosition().y >= 127.61498 && player.body.getPosition().y <=154)) {
+            gameWon = true;
+            gameOver();
         }
     }
 
     public void gameOver() {
-        levelController.batch.setProjectionMatrix(gameOverScreen.stage.getCamera().combined);
-        gameOverScreen.stage.act(Gdx.graphics.getDeltaTime());
-        gameOverScreen.stage.draw();
         buttons.stage.clear();
-        Gdx.input.setInputProcessor ( gameOverScreen.stage );
+        if(gameOver) {
+            levelController.batch.setProjectionMatrix(gameOverScreen.stage.getCamera().combined);
+            gameOverScreen.stage.act(Gdx.graphics.getDeltaTime());
+            gameOverScreen.stage.draw();
+            Gdx.input.setInputProcessor ( gameOverScreen.stage );
+        }
+        else if (gameWon) {
+            levelController.batch.setProjectionMatrix(gameOverScreen.stage.getCamera().combined);
+            gameWonScreen.stage.act(Gdx.graphics.getDeltaTime());
+            gameWonScreen.stage.draw();
+            Gdx.input.setInputProcessor ( gameWonScreen.stage );
+        }
         if (gameOverScreen.isRetryPressed ( )) {
             dispose();
             levelController.setScreen(new Level_1(levelController));
-//            player.currentState = Arek.State.IDLE;
-//            player = new Arek(world, this );
-//            buttons = new MovementButtons(this.levelController.batch);
-//            worldCreator = new WorldCreator(world, map);
-//            buttons.stage.act(Gdx.graphics.getDeltaTime());
-//            buttons.stage.draw ();
-//            gameOverScreen.stage.clear ();
-//            Gdx.input.setInputProcessor ( buttons.stage );
-
+        }
+        if (gameWonScreen.isRestartPressed()) {
+            dispose();
+            levelController.setScreen(new Level_1(levelController));
         }
     }
     @Override
@@ -251,6 +282,8 @@ public class Level_1 implements Screen {
         world.dispose();
         gameOverScreen.dispose();
         buttons.dispose();
+        scoreTracker.dispose();
+        gameWonScreen.dispose();
     }
 
 }
